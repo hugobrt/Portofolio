@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liquid // Portfolio</title>
+    <title>Liquid Glass // Reveal</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
 
@@ -31,27 +31,23 @@
             align-items: center;
         }
 
-        /* --- LE FOND LIQUIDE (LAVA LAMP EFFECT) --- */
+        /* --- FOND LIQUIDE --- */
         .liquid-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-            background: #000;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: 0; background: #000;
+            /* Le fond commence très flou pour l'intro */
+            filter: blur(30px);
+            transition: filter 1.5s ease-out;
         }
+        /* Quand le site est chargé, le fond devient plus net */
+        body.loaded .liquid-bg { filter: blur(0px); }
 
         .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.8;
+            position: absolute; border-radius: 50%;
+            filter: blur(60px); opacity: 0.8;
             animation: floatLiquid 10s infinite ease-in-out alternate;
-            mix-blend-mode: screen; /* Donne l'effet lumineux */
+            mix-blend-mode: screen;
         }
-
         .orb-1 { width: 60vw; height: 60vw; background: radial-gradient(circle, var(--liquid-1), transparent); top: -20%; left: -20%; animation-duration: 15s; }
         .orb-2 { width: 50vw; height: 50vw; background: radial-gradient(circle, var(--liquid-2), transparent); bottom: -10%; right: -10%; animation-duration: 12s; }
         .orb-3 { width: 40vw; height: 40vw; background: radial-gradient(circle, var(--liquid-3), transparent); top: 40%; left: 40%; animation-duration: 18s; }
@@ -62,211 +58,114 @@
             100% { transform: translate(-20px, -30px) scale(0.9) skew(-2deg); }
         }
 
-        /* Une texture de bruit pour l'aspect "granuleux" réaliste */
         .noise-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
-            pointer-events: none;
-            z-index: 1;
+            pointer-events: none; z-index: 1; opacity: 0.4;
         }
 
-        /* --- CONTENEUR PRINCIPAL --- */
+        /* --- NOUVEAU LOADER ORGANIQUE --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease-out;
+        }
+        .loader-container { position: relative; width: 100px; height: 100px; }
+        .blob-loader {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            filter: blur(10px);
+            animation: blobAnim 3s infinite ease-in-out;
+        }
+        .blob-1 { background: var(--liquid-1); animation-delay: 0s; }
+        .blob-2 { background: var(--liquid-2); animation-delay: -1.5s; }
+        @keyframes blobAnim {
+            0%, 100% { transform: translate(0, 0) scale(1); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { transform: translate(10px, -10px) scale(1.2); border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        }
+
+
+        /* --- CONTENEUR PRINCIPAL (ANIMATION D'ENTRÉE) --- */
         .glass-panel {
-            position: relative;
-            z-index: 10;
-            width: 85%;
-            max-width: 1000px;
-            height: 80vh;
-            
-            /* L'Effet Verre Liquide */
+            position: relative; z-index: 10;
+            width: 85%; max-width: 1000px; height: 80vh;
             background: rgba(255, 255, 255, 0.01);
             backdrop-filter: blur(25px) saturate(180%);
             -webkit-backdrop-filter: blur(25px) saturate(180%);
-            
             border-radius: 40px;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-top: 1px solid rgba(255, 255, 255, 0.4); /* Reflet haut */
-            border-left: 1px solid rgba(255, 255, 255, 0.4); /* Reflet gauche */
+            border-top: 1px solid rgba(255, 255, 255, 0.4);
+            border-left: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; overflow: hidden;
             
-            box-shadow: 
-                0 20px 50px rgba(0,0,0,0.5), 
-                inset 0 0 30px rgba(255,255,255,0.05);
-            
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: transform 0.1s ease-out; /* Pour le tilt effect */
+            /* ÉTAT INITIAL AVANT L'ANIMATION (Invisible et déformé) */
+            opacity: 0;
+            transform: scale(0.8) skewY(10deg) translateY(50px);
+            filter: blur(30px); /* C'est le secret de l'effet liquide */
         }
 
-        /* Effet de reflet brillant qui bouge */
+        /* L'animation qui se déclenche quand le JS ajoute la classe */
+        .glass-panel.entrance-active {
+            /* Utilisation d'une courbe de Bézier élastique pour l'effet "pop" One UI */
+            animation: liquidCrystalReveal 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes liquidCrystalReveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) skewY(10deg) translateY(100px);
+                filter: blur(40px); /* Très flou au début */
+            }
+            60% {
+                 /* Point de sursaut : ça dépasse un peu avant de se stabiliser */
+                 opacity: 1;
+                 transform: scale(1.02) skewY(-2deg) translateY(-10px);
+                 filter: blur(5px); /* Commence à devenir net */
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) skewY(0deg) translateY(0);
+                filter: blur(0px); /* Netneté cristalline */
+            }
+        }
+
+        /* Effet de reflet brillant */
         .glass-panel::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -50%;
-            width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
-            transform: skewX(-25deg);
-            pointer-events: none;
-            transition: 0.5s;
+            content: ''; position: absolute; top: 0; left: -50%; width: 100%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-25deg); pointer-events: none; transition: 0.5s; z-index: 11;
         }
-        .glass-panel:hover::before {
-            left: 150%;
-            transition: 1s ease-in-out;
-        }
+        .glass-panel:hover::before { left: 150%; transition: 1s ease-in-out; }
 
-        /* --- HEADER --- */
-        header {
-            padding: 30px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #a2d2ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(162, 210, 255, 0.5);
-        }
-
-        /* NAVIGATION "BUBBLE" */
-        nav {
-            background: rgba(0,0,0,0.3);
-            padding: 5px;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            gap: 5px;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 12px 25px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effet rebond */
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-btn:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.05);
-        }
-
-        .nav-btn.active {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
-            backdrop-filter: blur(5px);
-        }
+        /* --- HEADER & NAV --- */
+        header { padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, #fff 0%, #a2d2ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(162, 210, 255, 0.5); }
+        nav { background: rgba(0,0,0,0.3); padding: 5px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05); display: flex; gap: 5px; }
+        .nav-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 25px; border-radius: 30px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-btn.active { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
 
         /* --- CONTENU --- */
-        .content-wrapper {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            position: relative;
-            scroll-behavior: smooth;
-        }
-
-        /* Masquer la scrollbar tout en gardant le scroll */
+        .content-wrapper { flex: 1; padding: 40px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
         .content-wrapper::-webkit-scrollbar { width: 0px; background: transparent; }
-
-        .page-section {
-            display: none;
-            animation: flowUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
+        .page-section { display: none; /* L'animation du contenu attend que le panneau soit là */ animation: contentFadeIn 0.8s ease-out 0.5s both;}
         .page-section.active { display: block; }
-
-        @keyframes flowUp {
-            from { opacity: 0; transform: translateY(40px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+        @keyframes contentFadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
 
         h1 { font-size: 4rem; margin: 0; line-height: 1; letter-spacing: -2px; }
         h2 { font-size: 2rem; margin-bottom: 20px; font-weight: 300; }
         p.subtitle { font-size: 1.2rem; color: var(--text-muted); margin-top: 15px; max-width: 500px; }
 
-        /* BOUTON ACTION FLUIDE */
-        .cta-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 15px 40px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            border-radius: 50px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-btn::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 0%; height: 100%;
-            background: rgba(255,255,255,0.1);
-            transition: 0.3s;
-        }
-        .cta-btn:hover::after { width: 100%; }
-        .cta-btn:hover { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-
-        /* CARDS POUR CV & PROJETS (Effet Glaçon) */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .ice-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 25px;
-            transition: 0.4s;
-            position: relative;
-        }
-
-        .ice-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border-color: rgba(255,255,255,0.3);
-        }
-
-        .ice-card h3 { margin-top: 0; font-weight: 500; }
-        .ice-card span { font-size: 0.85rem; color: var(--liquid-2); display: block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- LOADER LIQUIDE --- */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 999;
-            display: flex; justify-content: center; align-items: center;
-            transition: opacity 1s ease;
-        }
-        .liquid-drop {
-            width: 20px; height: 20px;
-            background: #fff;
-            border-radius: 50%;
-            animation: drop 1.5s infinite ease-in-out;
-            box-shadow: 0 0 20px #fff;
-        }
-        @keyframes drop {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(3); opacity: 0.5; }
-            100% { transform: scale(5); opacity: 0; }
-        }
-
+        .cta-btn { display: inline-block; margin-top: 30px; padding: 15px 40px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50px; font-size: 1rem; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
+        .cta-btn::after { content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%; background: rgba(255,255,255,0.1); transition: 0.3s; }
+        .cta-btn:hover::after { width: 100%; } .cta-btn:hover { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .ice-card { background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 25px; transition: 0.4s; position: relative; }
+        .ice-card:hover { transform: translateY(-5px) scale(1.02); background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.3); }
+        .ice-card h3 { margin-top: 0; font-weight: 500; } .ice-card span { font-size: 0.85rem; color: var(--liquid-2); display: block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -279,7 +178,10 @@
     </div>
 
     <div id="loader">
-        <div class="liquid-drop"></div>
+        <div class="loader-container">
+            <div class="blob-loader blob-1"></div>
+            <div class="blob-loader blob-2"></div>
+        </div>
     </div>
 
     <div class="glass-panel" id="panel">
@@ -293,106 +195,77 @@
         </header>
 
         <div class="content-wrapper">
-            
             <div id="home" class="page-section active">
                 <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
                     <p style="color: var(--liquid-2); text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem;">Interface Numérique</p>
                     <h1>DESIGN<br><span style="color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.5);">LIQUIDE.</span></h1>
                     <p class="subtitle">Bienvenue dans un espace où le code rencontre la fluidité. Je crée des expériences web immersives et réactives.</p>
-                    <div>
-                        <button class="cta-btn" onclick="nav('portfolio', document.querySelectorAll('.nav-btn')[2])">Explorer les projets</button>
-                    </div>
+                    <div><button class="cta-btn" onclick="nav('portfolio', document.querySelectorAll('.nav-btn')[2])">Explorer les projets</button></div>
                 </div>
             </div>
-
             <div id="cv" class="page-section">
                 <h2>Données Brutes</h2>
                 <div class="grid">
-                    <div class="ice-card">
-                        <span>2024 - Présent</span>
-                        <h3>Lead Developer</h3>
-                        <p style="color:rgba(255,255,255,0.7)">Agence Digitale X.<br>Conception d'architectures React & Animations WebGL.</p>
-                    </div>
-                    <div class="ice-card">
-                        <span>2022 - 2024</span>
-                        <h3>UI Designer</h3>
-                        <p style="color:rgba(255,255,255,0.7)">Freelance.<br>Création d'interfaces minimalistes pour startups Fintech.</p>
-                    </div>
-                    <div class="ice-card">
-                        <span>Stack</span>
-                        <h3>Technologies</h3>
-                        <p style="color:rgba(255,255,255,0.7)">
-                            • Javascript (ES6+)<br>
-                            • React / Next.js<br>
-                            • Three.js / R3F<br>
-                            • Node.js
-                        </p>
-                    </div>
+                    <div class="ice-card"><span>2024 - Présent</span><h3>Lead Developer</h3><p style="color:rgba(255,255,255,0.7)">Agence Digitale X.<br>Conception d'architectures React & Animations WebGL.</p></div>
+                    <div class="ice-card"><span>2022 - 2024</span><h3>UI Designer</h3><p style="color:rgba(255,255,255,0.7)">Freelance.<br>Création d'interfaces minimalistes pour startups Fintech.</p></div>
                 </div>
             </div>
-
             <div id="portfolio" class="page-section">
                 <h2>Laboratoire</h2>
                 <div class="grid">
-                    <div class="ice-card">
-                        <span>Site E-Commerce</span>
-                        <h3>NEON SNEAKERS</h3>
-                        <p style="color:rgba(255,255,255,0.7)">Shop immersif avec vue 3D des produits.</p>
-                    </div>
-                    <div class="ice-card">
-                        <span>Application Web</span>
-                        <h3>CRYPTO DASH</h3>
-                        <p style="color:rgba(255,255,255,0.7)">Dashboard financier en temps réel style Glassmorphism.</p>
-                    </div>
-                    <div class="ice-card">
-                        <span>Expérience</span>
-                        <h3>AUDIO VISUALIZER</h3>
-                        <p style="color:rgba(255,255,255,0.7)">Génération de particules réactives à la musique.</p>
-                    </div>
+                    <div class="ice-card"><span>Site E-Commerce</span><h3>NEON SNEAKERS</h3><p style="color:rgba(255,255,255,0.7)">Shop immersif avec vue 3D des produits.</p></div>
+                    <div class="ice-card"><span>Application Web</span><h3>CRYPTO DASH</h3><p style="color:rgba(255,255,255,0.7)">Dashboard financier en temps réel style Glassmorphism.</p></div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script>
-        // 1. ANIMATION DE CHARGEMENT
+        // --- SÉQUENCE D'ANIMATION D'ENTRÉE ---
         window.addEventListener('load', () => {
+            // 1. On attend un peu que le loader tourne
             setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
+                // 2. On fait disparaître le loader
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                
+                // 3. On rend le fond plus net
+                document.body.classList.add('loaded');
+
+                // 4. Une fois le loader presque parti, on lance l'animation du panneau
                 setTimeout(() => {
-                    document.getElementById('loader').style.display = 'none';
-                }, 1000);
-            }, 1000);
+                    loader.style.display = 'none';
+                    // C'est ICI que la magie opère : on ajoute la classe qui déclenche le keyframe CSS
+                    document.getElementById('panel').classList.add('entrance-active');
+                }, 600);
+
+            }, 1500); // Temps d'attente initial (1.5s)
         });
 
-        // 2. NAVIGATION
+
+        // NAVIGATION (Standard)
         function nav(sectionId, btnElement) {
-            // Reset sections
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
-
-            // Reset boutons
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             btnElement.classList.add('active');
         }
 
-        // 3. EFFET DE TILT 3D (Mouvement de la carte avec la souris)
+        // EFFET TILT 3D (Standard)
         const panel = document.getElementById('panel');
-        
         document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth / 2 - e.pageX) / 50; // Divise pour réduire l'intensité
+            const x = (window.innerWidth / 2 - e.pageX) / 50;
             const y = (window.innerHeight / 2 - e.pageY) / 50;
-
-            // Applique la rotation légère
-            panel.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+            // On vérifie si l'animation d'entrée est finie pour éviter les conflits
+            if(panel.classList.contains('entrance-active')) {
+                 panel.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+            }
         });
-
-        // Remettre à plat si la souris sort
         document.addEventListener('mouseleave', () => {
-            panel.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            if(panel.classList.contains('entrance-active')) {
+                panel.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            }
         });
-
     </script>
 </body>
 </html>
