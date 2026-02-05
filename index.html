@@ -3,362 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System_Root // Portfolio</title>
+    <title>Portfolio // Glass Edition</title>
     <style>
-        /* --- CSS: LE STYLE HACKER --- */
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap');
 
-        body {
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --text-color: #ffffff;
+            --accent-color: #a2d2ff;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: black;
-            color: #0F0; /* Vert Matrix */
-            font-family: 'VT323', monospace;
-            overflow: hidden; /* Pour éviter les scrollbars à cause du canvas */
         }
 
-        /* Le Canvas pour la pluie numérique */
-        canvas {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        /* Conteneur principal par-dessus le canvas */
-        #interface {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
+        body {
+            background: #0f0c29;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            pointer-events: none; /* Laisse passer les clics si besoin, mais on va activer le contenu */
-        }
-
-        /* La boîte de contenu style "Terminal" */
-        .terminal-window {
-            background-color: rgba(0, 10, 0, 0.9); /* Fond semi-transparent */
-            border: 2px solid #0F0;
-            width: 80%;
-            max-width: 800px;
-            height: 70vh;
-            padding: 20px;
-            box-shadow: 0 0 20px #0F0;
             position: relative;
-            pointer-events: auto; /* Réactive les clics ici */
-            display: none; /* Caché au début pour l'intro */
-            flex-direction: column;
         }
 
-        /* L'intro de démarrage */
-        #boot-sequence {
+        /* --- ARRIÈRE-PLAN LIQUIDE (BLOBS) --- */
+        .blobs-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: black;
-            z-index: 3;
+            z-index: 0;
+            overflow: hidden;
+            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: #ff00cc;
+            top: -100px;
+            left: -100px;
+            animation-duration: 12s;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: #3333ff;
+            bottom: -50px;
+            right: -50px;
+            animation-duration: 15s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: #00ffcc;
+            bottom: 20%;
+            left: 30%;
+            animation-duration: 9s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* --- LOADING SCREEN --- */
+        #loader {
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(20px);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            font-size: 1.5rem;
+            transition: opacity 1s ease, visibility 1s;
         }
 
-        /* Typography & Effets */
-        h1, h2 {
-            text-transform: uppercase;
-            text-shadow: 0 0 5px #0F0;
-            margin-top: 0;
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        p, li {
-            font-size: 1.2rem;
-            line-height: 1.4;
-        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .scanline {
-            width: 100%;
-            height: 100px;
+        /* --- MAIN INTERFACE (GLASS CARD) --- */
+        .glass-container {
+            position: relative;
             z-index: 10;
-            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(32, 255, 77, 0.04) 50%, rgba(0,0,0,0) 100%);
-            opacity: 0.1;
-            position: absolute;
-            bottom: 100%;
-            animation: scanline 10s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes scanline {
-            0% { bottom: 100%; }
-            100% { bottom: -100%; }
-        }
-
-        /* Navigation */
-        nav {
-            border-bottom: 1px solid #0F0;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            width: 90%;
+            max-width: 1100px;
+            height: 85vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px; /* One UI Rounded Corners */
+            box-shadow: var(--glass-shadow);
             display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s ease-out;
+        }
+
+        .glass-container.loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* --- HEADER & NAV --- */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #fff, #a2d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 5px;
+            border-radius: 50px;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        nav button:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        nav button.active {
+            background: #fff;
+            color: #0f0c29;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* --- CONTENT AREA --- */
+        .content-area {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { font-size: 3.5rem; margin-bottom: 10px; font-weight: 700; }
+        h2 { font-size: 2rem; margin-bottom: 25px; border-left: 4px solid var(--accent-color); padding-left: 15px; }
+        p { font-size: 1.1rem; line-height: 1.6; color: rgba(255,255,255,0.8); max-width: 600px; }
+
+        /* --- CARDS (Pour CV & Portfolio) --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
 
-        button {
-            background: transparent;
-            border: 1px solid #0F0;
-            color: #0F0;
-            font-family: 'VT323', monospace;
-            font-size: 1.2rem;
-            padding: 5px 15px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            transition: transform 0.3s ease, background 0.3s ease;
         }
 
-        button:hover {
-            background: #0F0;
-            color: black;
-            box-shadow: 0 0 10px #0F0;
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        button.active {
-            background: #0F0;
-            color: black;
-        }
-
-        /* Sections de contenu */
-        .content-section {
-            display: none; /* Caché par défaut */
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-        .content-section.active {
-            display: block;
-            animation: flicker 0.5s;
-        }
-
-        /* Scrollbar custom */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #0F0; border: 1px solid #000; }
-
-        @keyframes flicker {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            60% { opacity: 0.2; }
-            100% { opacity: 1; }
-        }
-
-        .cursor::after {
-            content: '_';
-            animation: blink 1s infinite;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        /* Style pour les projets */
-        .project-card {
-            border: 1px dashed #0F0;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        .project-card:hover {
-            background: rgba(0, 255, 0, 0.1);
-        }
-
+        .card h3 { margin-bottom: 10px; color: var(--accent-color); }
+        .card .date { font-size: 0.9rem; opacity: 0.5; margin-bottom: 15px; display: block; }
+        .tags { margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap; }
         .tag {
-            background: #003300;
-            padding: 2px 6px;
+            background: rgba(162, 210, 255, 0.2);
+            color: #a2d2ff;
+            padding: 4px 10px;
+            border-radius: 8px;
             font-size: 0.8rem;
-            margin-right: 5px;
         }
+
+        /* Scrollbar moderne */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .glass-container { width: 100%; height: 100%; border-radius: 0; border: none; }
+            header { flex-direction: column; gap: 20px; padding: 20px; }
+            nav { width: 100%; justify-content: center; }
+            h1 { font-size: 2.5rem; }
+        }
+
     </style>
 </head>
 <body>
 
-    <canvas id="matrix"></canvas>
-
-    <div id="boot-sequence">
-        <div id="boot-text"></div>
+    <div class="blobs-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
-    <div id="interface">
-        <div class="terminal-window" id="main-terminal">
-            <div class="scanline"></div>
-            
-            <header>
-                <h1>> USER: [TON NOM] <span class="cursor"></span></h1>
-                <p>STATUS: CONNECTED // SYSTEM SECURE</p>
-            </header>
+    <div id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; opacity: 0.7; letter-spacing: 2px;">CHARGEMENT</p>
+    </div>
 
+    <div class="glass-container" id="app">
+        <header>
+            <div class="logo">TonNom.</div>
             <nav>
-                <button onclick="showSection('home')" id="btn-home" class="active">/HOME</button>
-                <button onclick="showSection('cv')" id="btn-cv">/CV_DATA</button>
-                <button onclick="showSection('portfolio')" id="btn-portfolio">/PROJECTS</button>
+                <button onclick="switchTab('home')" id="btn-home" class="active">Accueil</button>
+                <button onclick="switchTab('cv')" id="btn-cv">Parcours</button>
+                <button onclick="switchTab('portfolio')" id="btn-portfolio">Projets</button>
             </nav>
+        </header>
 
-            <div id="home" class="content-section active">
-                <h2>> WELCOME_MESSAGE</h2>
-                <p>Bienvenue dans le Mainframe.</p>
-                <p>Je suis un développeur passionné, spécialisé dans l'infiltration de systèmes complexes et la création de solutions robustes.</p>
-                <br>
-                <p>> Sélectionnez un module dans la barre de navigation pour accéder aux données.</p>
-            </div>
+        <main class="content-area">
+            
+            <section id="home" class="section active">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <p style="color: var(--accent-color); font-weight: 700; margin-bottom: 10px;">HELLO WORLD</p>
+                    <h1>Créateur Digital &<br>Développeur Web.</h1>
+                    <p>Je conçois des expériences numériques immersives. Passionné par le design moderne et le code propre. Bienvenue dans mon univers visuel.</p>
+                    <div style="margin-top: 30px;">
+                        <button onclick="switchTab('portfolio')" style="padding: 12px 30px; border-radius: 30px; border: none; background: #fff; color: #0f0c29; font-weight: 700; cursor: pointer;">Voir mes travaux</button>
+                    </div>
+                </div>
+            </section>
 
-            <div id="cv" class="content-section">
-                <h2>> DECRYPTING RESUME...</h2>
-                
-                <h3>[ EXPÉRIENCE ]</h3>
-                <ul>
-                    <li>
-                        <strong>2023 - PRÉSENT : DÉVELOPPEUR FULLSTACK</strong><br>
-                        > TechCorp Industries<br>
-                        > Mission : Développement d'interfaces React & Sécurisation API Node.js.
-                    </li>
-                    <br>
-                    <li>
-                        <strong>2021 - 2023 : JUNIOR DEV</strong><br>
-                        > StartUp Nation<br>
-                        > Mission : Maintenance de code legacy et refonte UI.
-                    </li>
-                </ul>
-
-                <h3>[ COMPÉTENCES ]</h3>
-                <p>
-                    <span class="tag">JAVASCRIPT</span>
-                    <span class="tag">PYTHON</span>
-                    <span class="tag">HTML/CSS</span>
-                    <span class="tag">CYBERSECURITY</span>
-                    <span class="tag">SQL</span>
-                </p>
-            </div>
-
-            <div id="portfolio" class="content-section">
-                <h2>> LOADING PROJECT FILES...</h2>
-
-                <div class="project-card">
-                    <h3>PROJECT_ALPHA.exe</h3>
-                    <p>Une application web de gestion de tâches avec chiffrement bout-en-bout.</p>
-                    <p><span class="tag">REACT</span> <span class="tag">FIREBASE</span></p>
+            <section id="cv" class="section">
+                <h2>Mon Parcours</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <span class="date">2023 - PRÉSENT</span>
+                        <h3>Développeur Fullstack</h3>
+                        <p>TechCorp Industries. Création d'interfaces React complexes et optimisation des performances backend.</p>
+                    </div>
+                    <div class="card">
+                        <span class="date">2021 - 2023</span>
+                        <h3>Junior Designer UI/UX</h3>
+                        <p>Creative Studio. Conception de maquettes Figma et intégration web responsive.</p>
+                    </div>
+                    <div class="card">
+                        <span class="date">2018 - 2021</span>
+                        <h3>Master Informatique</h3>
+                        <p>Université de Technologie. Spécialisation développement web et cybersécurité.</p>
+                    </div>
                 </div>
 
-                <div class="project-card">
-                    <h3>NEURAL_NET_VISUALIZER</h3>
-                    <p>Visualisation de données en temps réel utilisant D3.js.</p>
-                    <p><span class="tag">D3.JS</span> <span class="tag">API REST</span></p>
+                <h2 style="margin-top: 40px;">Stack Technique</h2>
+                <div class="tags" style="gap: 15px;">
+                    <span class="tag" style="font-size: 1rem; padding: 10px 20px;">React JS</span>
+                    <span class="tag" style="font-size: 1rem; padding: 10px 20px;">Node.js</span>
+                    <span class="tag" style="font-size: 1rem; padding: 10px 20px;">Figma</span>
+                    <span class="tag" style="font-size: 1rem; padding: 10px 20px;">Python</span>
                 </div>
+            </section>
 
-                <div class="project-card">
-                    <h3>BOT_DISCORD_V2</h3>
-                    <p>Bot de modération automatique pour serveurs communautaires.</p>
-                    <p><span class="tag">NODE.JS</span> <span class="tag">DISCORD.JS</span></p>
+            <section id="portfolio" class="section">
+                <h2>Projets Récents</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>App Finance Dashboard</h3>
+                        <p>Une application de gestion de budget avec des graphiques interactifs en temps réel.</p>
+                        <div class="tags">
+                            <span class="tag">Vue.js</span>
+                            <span class="tag">Chart.js</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>E-Commerce Neon</h3>
+                        <p>Site de vente en ligne avec panier dynamique et paiement Stripe intégré.</p>
+                        <div class="tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Stripe</span>
+                            <span class="tag">Redux</span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Portfolio 3D</h3>
+                        <p>Expérimentation WebGL pour un rendu 3D interactif dans le navigateur.</p>
+                        <div class="tags">
+                            <span class="tag">Three.js</span>
+                            <span class="tag">WebGL</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-        </div>
+        </main>
     </div>
 
     <script>
-        /* --- JS: LA LOGIQUE --- */
-
-        // 1. EFFET MATRIX
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-
-        for(let x = 0; x < columns; x++) drops[x] = 1;
-
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // Effet de traînée
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = "#0F0"; // Couleur du texte
-            ctx.font = fontSize + "px arial";
-
-            for(let i = 0; i < drops.length; i++) {
-                const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 33);
-
-        // Gestion du redimensionnement
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // Simulation du temps de chargement
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                const app = document.getElementById('app');
+                
+                // Disparition du loader
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                
+                // Apparition de l'interface (Zoom In)
+                app.classList.add('loaded');
+            }, 1500); // 1.5 secondes de chargement
         });
 
-        // 2. SÉQUENCE DE BOOT (ANIMATION D'INTRO)
-        const bootText = document.getElementById('boot-text');
-        const bootLines = [
-            "Initializing kernel...",
-            "Loading drivers...",
-            "Connecting to server at 127.0.0.1...",
-            "Decrypting user data...",
-            "ACCESS GRANTED."
-        ];
-        
-        let lineIndex = 0;
-        let charIndex = 0;
+        // Gestion des Onglets
+        function switchTab(tabId) {
+            // Retirer la classe active de tous les contenus
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            // Retirer la classe active de tous les boutons
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
 
-        function typeWriter() {
-            if (lineIndex < bootLines.length) {
-                if (charIndex < bootLines[lineIndex].length) {
-                    bootText.innerHTML += bootLines[lineIndex].charAt(charIndex);
-                    charIndex++;
-                    setTimeout(typeWriter, 50); // Vitesse de frappe
-                } else {
-                    bootText.innerHTML += "<br>";
-                    lineIndex++;
-                    charIndex = 0;
-                    setTimeout(typeWriter, 300); // Pause entre les lignes
-                }
-            } else {
-                // Fin du boot, on affiche l'interface
-                setTimeout(() => {
-                    document.getElementById('boot-sequence').style.display = 'none';
-                    document.getElementById('main-terminal').style.display = 'flex';
-                }, 1000);
-            }
-        }
-
-        // Lancer le boot au chargement
-        window.onload = typeWriter;
-
-        // 3. NAVIGATION (ONGLETS)
-        function showSection(sectionId) {
-            // Cacher toutes les sections
-            document.querySelectorAll('.content-section').forEach(sec => {
-                sec.classList.remove('active');
-            });
-            // Désactiver tous les boutons
-            document.querySelectorAll('nav button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Afficher la section demandée
-            document.getElementById(sectionId).classList.add('active');
-            
-            // Activer le bouton correspondant
-            document.getElementById('btn-' + sectionId).classList.add('active');
+            // Activer le contenu cible
+            document.getElementById(tabId).classList.add('active');
+            // Activer le bouton cible
+            document.getElementById('btn-' + tabId).classList.add('active');
         }
     </script>
+
 </body>
 </html>
