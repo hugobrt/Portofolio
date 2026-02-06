@@ -9,9 +9,11 @@
 
         :root {
             --bg-color: #05000a;
-            --accent-1: #ff005c; /* Rose Néon */
-            --accent-2: #ffbe0b; /* Jaune/Orange */
-            --glass: rgba(20, 20, 20, 0.6);
+            --accent-1: #ff005c; /* Rose */
+            --accent-2: #ffbe0b; /* Jaune */
+            --accent-3: #43cea2; /* Vert */
+            --accent-4: #185a9d; /* Bleu */
+            --accent-5: #9d50bb; /* Violet */
             --border: rgba(255, 255, 255, 0.1);
         }
 
@@ -22,113 +24,97 @@
             height: 100vh;
             overflow: hidden;
             color: white;
-            display: flex; /* Layout Split Screen */
+            display: flex;
         }
 
-        /* --- FOND ORIGINEL (EXACTEMENT COMME TON FICHIER) --- */
-        .background-fx {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: #05000a;
-        }
-        .blob {
-            position: absolute; border-radius: 50%;
-            filter: blur(80px); opacity: 0.6;
-            animation: float 10s infinite alternate;
-        }
-        .b1 { top: 10%; left: 10%; width: 50vw; height: 50vw; background: var(--accent-1); animation-duration: 12s; }
-        .b2 { bottom: 10%; right: 10%; width: 40vw; height: 40vw; background: var(--accent-2); animation-duration: 15s; }
-
-        @keyframes float {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(40px, -40px); }
+        /* --- FOND --- */
+        .background-fx { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #05000a; overflow: hidden; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; mix-blend-mode: screen; animation: liquidMotion 20s infinite alternate ease-in-out; }
+        .b1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-1); animation-duration: 25s; }
+        .b2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; background: var(--accent-2); animation-duration: 30s; animation-delay: -5s; }
+        .b3 { top: 30%; right: 10%; width: 35vw; height: 35vw; background: var(--accent-4); animation-duration: 28s; animation-delay: -10s; opacity: 0.4; }
+        .b4 { bottom: 10%; left: 10%; width: 40vw; height: 40vw; background: var(--accent-5); animation-duration: 22s; animation-delay: -15s; }
+        .b5 { top: 10%; left: 40%; width: 30vw; height: 30vw; background: var(--accent-3); animation-duration: 35s; animation-delay: -2s; }
+        @keyframes liquidMotion {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); filter: blur(80px) hue-rotate(0deg); }
+            33% { transform: translate(100px, -50px) scale(1.2) rotate(45deg); filter: blur(90px) hue-rotate(45deg); }
+            66% { transform: translate(-50px, 80px) scale(0.8) rotate(90deg); filter: blur(70px) hue-rotate(90deg); }
+            100% { transform: translate(30px, -30px) scale(1.1) rotate(135deg); filter: blur(100px) hue-rotate(135deg); }
         }
 
-        /* --- LOADER INTRO --- */
+        /* --- LOADER --- */
         #loader {
             position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2rem;
-            transition: transform 0.8s ease-in-out;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem;
+            transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
         }
-        .loader-text span {
-            display: inline-block; animation: wave 1s infinite;
+        #loader.hidden { opacity: 0; visibility: hidden; transform: scale(1.1); pointer-events: none; }
+        .loader-text span { display: inline-block; color: white; margin: 0 5px; animation: wave 1.5s infinite ease-in-out; }
+        .loader-text span:nth-child(1) { animation-delay: 0.0s; }
+        .loader-text span:nth-child(2) { animation-delay: 0.1s; }
+        .loader-text span:nth-child(3) { animation-delay: 0.2s; }
+        .loader-text span:nth-child(4) { animation-delay: 0.3s; }
+        @keyframes wave { 0%, 100% { transform: translateY(0); color: white; } 50% { transform: translateY(-20px); color: var(--accent-1); text-shadow: 0 0 15px var(--accent-1); } }
+        .intro-progress-container { width: 200px; height: 3px; background: rgba(255,255,255,0.1); margin-top: 30px; border-radius: 10px; overflow: hidden; }
+        .intro-progress-fill { width: 0%; height: 100%; background: white; transition: width 2.2s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+        /* --- LEFT PANEL --- */
+        .left-panel { flex: 1; padding: 80px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        
+        h1 { font-family: 'Syne', sans-serif; font-size: 6vw; line-height: 0.9; margin: 0; text-transform: uppercase; font-weight: 800; }
+        .hero-line { display: block; overflow: hidden; }
+        
+        /* 1. APPARITION DU NOM (2.4s et 2.6s) */
+        .hero-line span {
+            display: block; opacity: 0; transform: translateY(100px) skewY(10deg); filter: blur(20px);
+            animation: premiumReveal 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards;
         }
-        .loader-text span:nth-child(1) { animation-delay: 0.1s; }
-        .loader-text span:nth-child(2) { animation-delay: 0.2s; }
-        .loader-text span:nth-child(3) { animation-delay: 0.3s; }
-        .loader-text span:nth-child(4) { animation-delay: 0.4s; }
+        .hero-line:nth-child(1) span { animation-delay: 2.4s; }
+        .hero-line:nth-child(2) span { animation-delay: 2.6s; }
+        @keyframes premiumReveal { to { opacity: 1; transform: translateY(0) skewY(0deg); filter: blur(0); } }
 
-        @keyframes wave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); color: var(--accent-1); } }
-
-        /* --- PARTIE GAUCHE (IDENTITÉ) --- */
-        .left-panel {
-            flex: 1; /* Prend 50% */
-            display: flex; flex-direction: column; justify-content: center; padding: 80px;
-            position: relative;
-            transform: translateX(-100%); /* Caché à gauche au début */
-            opacity: 0;
-            transition: all 1.2s cubic-bezier(0.2, 1, 0.2, 1);
-        }
-
-        h1 {
-            font-family: 'Syne', sans-serif; font-size: 6vw; line-height: 0.9; margin: 0;
-            text-transform: uppercase; font-weight: 800;
-        }
-
-        /* AJOUT : Animation Rebond sur le Nom */
-        .bounce-name { animation: rubberBand 1.2s 1.2s both; display: inline-block; }
-        @keyframes rubberBand {
-            0% { transform: scale3d(1, 1, 1); }
-            30% { transform: scale3d(1.25, 0.75, 1); }
-            40% { transform: scale3d(0.75, 1.25, 1); }
-            50% { transform: scale3d(1.15, 0.85, 1); }
-            65% { transform: scale3d(0.95, 1.05, 1); }
-            75% { transform: scale3d(1.05, 0.95, 1); }
-            100% { transform: scale3d(1, 1, 1); }
-        }
-
-        .outline { -webkit-text-stroke: 2px rgba(255,255,255,0.5); color: transparent; display: block; }
-        .fill { color: white; text-shadow: 0 0 30px rgba(255, 0, 92, 0.5); display: block; }
-
+        .outline { -webkit-text-stroke: 2px rgba(255,255,255,0.5); color: transparent; }
+        .fill { color: white; text-shadow: 0 0 30px rgba(255, 0, 92, 0.5); }
+        
+        /* 2. APPARITION BADGE & SOUS-TITRE (2.7s - Soit 0.1s après le nom) */
         .badge {
             display: inline-block; margin-bottom: 20px;
             background: white; color: black; padding: 5px 15px; border-radius: 50px;
-            font-weight: 700; font-size: 0.9rem; letter-spacing: 1px;
-            width: fit-content;
-            /* Animation Flottante ajoutée */
-            animation: floatBadge 3s infinite ease-in-out;
+            font-weight: 700; font-size: 0.9rem; letter-spacing: 1px; width: fit-content;
+            opacity: 0; 
+            /* Apparition retardée ici */
+            animation: fadeInSimple 1s 2.7s forwards, floatBadge 3s infinite ease-in-out; 
             box-shadow: 0 0 15px rgba(255,255,255,0.3);
         }
+        
+        .sub-text-anim {
+            opacity: 0;
+            transform: translateY(20px);
+            /* Même délai que le badge */
+            animation: fadeInUpSimple 1s 2.7s forwards; 
+        }
+
+        @keyframes fadeInSimple { to { opacity: 1; } }
+        @keyframes fadeInUpSimple { to { opacity: 0.8; transform: translateY(0); } }
         @keyframes floatBadge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        /* --- PARTIE DROITE (CONTENU GLASS) --- */
+        /* --- RIGHT PANEL (MENU) --- */
         .right-panel {
-            flex: 1; /* Prend 50% */
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(40px);
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 60px;
-            overflow-y: auto;
-            transform: translateX(100%); /* Caché à droite au début */
-            opacity: 0;
-            transition: all 1.2s cubic-bezier(0.2, 1, 0.2, 1) 0.2s; /* Petit délai */
+            flex: 1; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(40px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 60px; overflow-y: auto;
+            /* 3. APPARITION MENU (3.3s - Plus tard pour l'effet) */
+            transform: translateX(100%); opacity: 0;
+            animation: slideInRight 1.5s cubic-bezier(0.2, 1, 0.2, 1) 3.3s forwards;
         }
+        @keyframes slideInRight { to { transform: translateX(0); opacity: 1; } }
         .right-panel::-webkit-scrollbar { width: 0; }
 
-        /* MENU DE NAVIGATION */
-        nav {
-            background: rgba(0,0,0,0.4); padding: 5px; border-radius: 100px;
-            display: inline-flex; margin-bottom: 50px; border: 1px solid var(--border);
-        }
-        nav button {
-            background: transparent; border: none; color: #aaa;
-            padding: 10px 25px; border-radius: 50px; cursor: pointer;
-            font-family: 'Inter', sans-serif; font-weight: 500; transition: 0.3s;
-        }
+        nav { background: rgba(0,0,0,0.4); padding: 5px; border-radius: 100px; display: inline-flex; margin-bottom: 50px; border: 1px solid var(--border); }
+        nav button { background: transparent; border: none; color: #aaa; padding: 10px 25px; border-radius: 50px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; transition: 0.3s; }
         nav button.active { background: white; color: black; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         nav button:hover:not(.active) { color: white; background: rgba(255,255,255,0.1); }
 
-        /* CONTENU */
         .section { display: none; animation: fadeIn 0.5s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -136,101 +122,44 @@
         h2 { font-family: 'Syne', sans-serif; font-size: 2.5rem; margin-bottom: 30px; }
         p { color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 20px; }
 
-        /* CARDS PROJETS (AMÉLIORÉES: INTERACTIVES) */
         .project-card {
             background: rgba(0,0,0,0.2); border: 1px solid var(--border);
             padding: 25px; margin-bottom: 20px; border-radius: 16px;
             transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
         }
-        .project-card:hover { 
-            border-color: var(--accent-1); background: rgba(255, 0, 92, 0.1); 
-            transform: scale(1.02) translateX(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-        .project-card::after {
-            content: '➔'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-            opacity: 0; transition: 0.3s; font-size: 1.5rem; color: white;
-        }
+        .project-card:hover { border-color: var(--accent-1); background: rgba(255, 0, 92, 0.1); transform: scale(1.02) translateX(10px); }
+        .project-card::after { content: '➔'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); opacity: 0; transition: 0.3s; font-size: 1.5rem; color: white; }
         .project-card:hover::after { opacity: 1; right: 25px; }
-
         .project-card h3 { margin: 0 0 5px 0; font-size: 1.2rem; }
         .tags span { font-size: 0.7rem; color: var(--accent-2); margin-right: 10px; text-transform: uppercase; }
 
-        /* --- CLASSE D'ACTIVATION JS --- */
-        body.loaded .left-panel { transform: translateX(0); opacity: 1; }
-        body.loaded .right-panel { transform: translateX(0); opacity: 1; }
+        /* --- CV MODAL --- */
+        #cv-modal-bg { position: fixed; inset: 0; z-index: 2000; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: none; opacity: 0; transition: opacity 0.4s; justify-content: center; align-items: center; padding: 40px; }
+        #cv-modal-bg.open { opacity: 1; }
+        .cv-paper { width: 100%; max-width: 950px; height: 85vh; background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6); transform: scale(0.9); opacity: 0; transition: all 0.5s cubic-bezier(0.2, 1, 0.2, 1); display: flex; }
+        #cv-modal-bg.open .cv-paper { transform: scale(1); opacity: 1; }
+        #internal-cv-loader { position: absolute; inset: 0; z-index: 10; background: #05000a; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; }
+        .cv-anim-text span { display: inline-block; font-family: 'Syne'; font-size: 2.5rem; font-weight: 800; letter-spacing: 2px; color: white; margin: 0 4px; animation: cvWave 1.2s infinite ease-in-out; }
+        @keyframes cvWave { 0%, 100% { transform: translateY(0); color: white; } 50% { transform: translateY(-15px); color: var(--anim-color); text-shadow: 0 0 20px var(--anim-color); } }
+        .cv-anim-text span:nth-child(1) { --anim-color: var(--accent-1); animation-delay: 0s; }
+        .cv-anim-text span:nth-child(2) { --anim-color: var(--accent-2); animation-delay: 0.1s; }
+        .cv-anim-text span:nth-child(3) { --anim-color: var(--accent-3); animation-delay: 0.2s; }
+        .cv-anim-text span:nth-child(4) { --anim-color: var(--accent-4); animation-delay: 0.3s; }
+        .cv-sub-text { margin-top: 25px; font-family: 'Inter'; font-size: 0.85rem; letter-spacing: 4px; font-weight: 600; text-transform: uppercase; background: linear-gradient(to right, #444 0%, #fff 50%, #444 100%); background-size: 200% auto; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 2s linear infinite; }
+        @keyframes shimmer { to { background-position: 200% center; } }
+        #cv-content { width: 100%; height: 100%; display: grid; grid-template-columns: 1fr 2fr; opacity: 0; transition: opacity 0.8s; overflow-y: auto; }
+        .cv-sidebar { padding: 40px; background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.1); }
+        .cv-main { padding: 40px; }
+        .cv-photo { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--accent-1); margin-bottom: 30px; background: #222 url('https://via.placeholder.com/140') center/cover; }
+        .cv-close-btn { position: absolute; top: 20px; right: 20px; z-index: 20; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .cv-close-btn:hover { background: var(--accent-1); transform: rotate(90deg); }
 
-        /* RESPONSIVE MOBILE */
         @media (max-width: 900px) {
             body { flex-direction: column; overflow-y: auto; }
-            .left-panel { height: 40vh; padding: 40px; transform: translateY(-100%); width: 100%; }
-            .right-panel { height: 60vh; padding: 30px; transform: translateY(100%); width: 100%; }
-            body.loaded .left-panel { transform: translateY(0); }
-            body.loaded .right-panel { transform: translateY(0); }
-            h1 { font-size: 3rem; }
+            .left-panel { height: auto; padding: 60px 20px; width: 100%; }
+            .right-panel { height: auto; padding: 40px 20px; width: 100%; }
+            #cv-content { grid-template-columns: 1fr; }
         }
-
-        /* =================================================================
-           MODULE CV : CHARGEMENT + PAGE PLEIN ÉCRAN
-           ================================================================= */
-        
-        /* 1. Loader Spécifique CV (Noir) */
-        #cv-loading-screen {
-            position: fixed; inset: 0; z-index: 3000;
-            background: #000;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .cv-loading-text { font-family: 'Syne'; font-size: 1.2rem; margin-bottom: 15px; color: var(--accent-2); letter-spacing: 4px; text-transform: uppercase; }
-        .cv-progress-bar-container { width: 250px; height: 2px; background: #333; position: relative; }
-        .cv-progress-bar-fill { width: 0%; height: 100%; background: var(--accent-1); box-shadow: 0 0 10px var(--accent-1); transition: width 3s linear; }
-
-        /* 2. Page CV Complète (Transparente pour voir le fond) */
-        #cv-full-page {
-            position: fixed; inset: 0; z-index: 2500;
-            background: rgba(0,0,0,0.9); /* Très sombre pour lisibilité */
-            backdrop-filter: blur(10px);
-            display: none; opacity: 0; transition: opacity 0.5s;
-            overflow-y: auto; justify-content: center; padding: 40px 0;
-        }
-        #cv-full-page.active { opacity: 1; }
-
-        .cv-container {
-            width: 90%; max-width: 1000px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px; padding: 40px;
-            display: grid; grid-template-columns: 1fr 2fr; gap: 40px;
-            transform: translateY(50px); opacity: 0; transition: all 0.8s ease;
-        }
-        #cv-full-page.active .cv-container { transform: translateY(0); opacity: 1; }
-
-        .cv-photo-box {
-            width: 160px; height: 160px; border-radius: 50%; border: 3px solid var(--accent-1);
-            margin-bottom: 20px; background: #222;
-            background-image: url('https://via.placeholder.com/160'); /* METS TA PHOTO ICI */
-            background-size: cover; background-position: center;
-            box-shadow: 0 0 30px rgba(255, 0, 92, 0.3);
-        }
-
-        .cv-close-btn {
-            position: absolute; top: 30px; right: 30px;
-            width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
-            color: white; background: transparent; cursor: pointer; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center; transition: 0.3s;
-        }
-        .cv-close-btn:hover { background: var(--accent-1); border-color: var(--accent-1); transform: rotate(90deg); }
-
-        /* Animation des blocs dans le CV */
-        .cv-block { opacity: 0; transform: translateY(20px); transition: 0.5s ease; }
-        #cv-full-page.active .cv-block { opacity: 1; transform: translateY(0); }
-        .d1 { transition-delay: 0.3s; }
-        .d2 { transition-delay: 0.5s; }
-        .d3 { transition-delay: 0.7s; }
-
-        @media (max-width: 900px) {
-            .cv-container { grid-template-columns: 1fr; }
-            .cv-photo-box { margin: 0 auto 20px auto; }
-        }
-
     </style>
 </head>
 <body>
@@ -238,76 +167,56 @@
     <div class="background-fx">
         <div class="blob b1"></div>
         <div class="blob b2"></div>
+        <div class="blob b3"></div>
+        <div class="blob b4"></div>
+        <div class="blob b5"></div>
     </div>
 
     <div id="loader">
-        <div class="loader-text">
-            <span>H</span><span>U</span><span>G</span><span>O</span>
-        </div>
+        <div class="loader-text"><span>H</span><span>U</span><span>G</span><span>O</span></div>
+        <div class="intro-progress-container"><div class="intro-progress-fill" id="intro-fill"></div></div>
     </div>
 
-    <div id="cv-loading-screen">
-        <div class="cv-loading-text">CHARGEMENT CV...</div>
-        <div class="cv-progress-bar-container">
-            <div class="cv-progress-bar-fill" id="cv-bar"></div>
-        </div>
-    </div>
-
-    <div id="cv-full-page">
-        <button class="cv-close-btn" onclick="closeCV()">✕</button>
-        <div class="cv-container">
-            <div class="cv-left cv-block d1">
-                <div class="cv-photo-box"></div>
-                
-                <h3 style="color:var(--accent-2); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">CONTACT</h3>
-                <p>📍 Paris, France</p>
-                <p>✉️ email@hugo.com</p>
-                <p>📞 06.00.00.00.00</p>
-
-                <h3 style="color:var(--accent-2); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px; margin-top:30px;">SKILLS</h3>
-                <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                    <span style="background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px; font-size:0.8rem;">HTML/CSS</span>
-                    <span style="background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px; font-size:0.8rem;">JS / React</span>
-                    <span style="background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px; font-size:0.8rem;">Figma</span>
-                </div>
+    <div id="cv-modal-bg">
+        <div class="cv-paper">
+            <button class="cv-close-btn" onclick="closeCV()">✕</button>
+            <div id="internal-cv-loader">
+                <div class="cv-anim-text"><span>H</span><span>U</span><span>G</span><span>O</span></div>
+                <div class="cv-sub-text">Chargement du profil...</div>
             </div>
-
-            <div class="cv-right cv-block d2">
-                <h2 style="font-family:'Syne'; font-size:2.5rem; margin:0;">HUGO BRIQUET</h2>
-                <span style="color:var(--accent-1); font-weight:700; letter-spacing:1px;">ÉTUDIANT DÉVELOPPEUR</span>
-                
-                <div class="cv-block d3" style="margin-top:40px;">
-                    <h3 style="color:var(--accent-2);">PARCOURS</h3>
-                    
-                    <div style="margin-bottom:20px; border-left:2px solid var(--accent-1); padding-left:15px;">
-                        <strong style="font-size:1.1rem;">Master Web</strong>
-                        <div style="color:#888; font-size:0.9rem;">2024 | Université Tech</div>
+            <div id="cv-content">
+                <div class="cv-sidebar">
+                    <div class="cv-photo"></div>
+                    <h3 style="color:var(--accent-2);">CONTACT</h3>
+                    <p style="font-size:0.9rem;">📍 Paris, France<br>✉️ hugo@dev.com<br>📞 06.00.00.00.00</p>
+                    <h3 style="color:var(--accent-2); margin-top:30px;">SKILLS</h3>
+                    <p style="font-size:0.9rem;">React • Node.js • Design</p>
+                </div>
+                <div class="cv-main">
+                    <h2 style="font-family:'Syne'; margin:0; font-size:2.5rem;">HUGO BRIQUET</h2>
+                    <p style="color:var(--accent-1); font-weight:700;">DÉVELOPPEUR FULLSTACK</p>
+                    <hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">
+                    <h3 style="color:var(--accent-2);">EXPÉRIENCES</h3>
+                    <div style="margin-bottom:20px;">
+                        <strong>Alternance Web</strong><div style="color:#888; font-size:0.9rem;">2023 - Présent</div>
+                        <p style="margin-top:5px; font-size:0.95rem;">Développement d'apps React.</p>
                     </div>
-
-                    <div style="margin-bottom:20px; border-left:2px solid rgba(255,255,255,0.2); padding-left:15px;">
-                        <strong style="font-size:1.1rem;">Licence Info</strong>
-                        <div style="color:#888; font-size:0.9rem;">2021-2024 | Faculté</div>
-                    </div>
-
-                    <h3 style="color:var(--accent-2); margin-top:30px;">EXPÉRIENCES</h3>
-                    <div style="margin-bottom:20px; border-left:2px solid rgba(255,255,255,0.2); padding-left:15px;">
-                        <strong style="font-size:1.1rem;">Stage Intégration</strong>
-                        <div style="color:#888; font-size:0.9rem;">2023 | Agence Web</div>
-                        <p style="margin:5px 0 0 0; font-size:0.95rem;">Création de pages responsive.</p>
+                    <h3 style="color:var(--accent-2);">FORMATION</h3>
+                    <div style="margin-bottom:20px;">
+                        <strong>Master Informatique</strong><div style="color:#888; font-size:0.9rem;">2024</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="left-panel">
         <div class="badge">ÉTUDIANT</div>
-        <h1 class="bounce-name">
-            <span class="outline">HUGO</span>
-            <span class="fill">BRIQUET</span>
+        <h1>
+            <span class="hero-line"><span class="outline">HUGO</span></span>
+            <span class="hero-line"><span class="fill">BRIQUET</span></span>
         </h1>
-        <p style="margin-top: 30px; max-width: 400px; color: rgba(255,255,255,0.8);">
+        <p class="sub-text-anim" style="margin-top: 30px; max-width: 400px; color: rgba(255,255,255,0.8);">
             Création d'interfaces numériques & Développement Web.
         </p>
     </div>
@@ -315,7 +224,8 @@
     <div class="right-panel">
         <nav>
             <button class="active" onclick="show('home', this)">Intro</button>
-            <button onclick="launchCV()">CV</button> <button onclick="show('work', this)">Projets</button>
+            <button onclick="openCV()">CV</button>
+            <button onclick="show('work', this)">Projets</button>
         </nav>
 
         <div id="home" class="section active">
@@ -323,84 +233,62 @@
             <p>Je suis Hugo Briquet, un étudiant passionné par le code créatif.</p>
             <p>Mon objectif est de fusionner design "One UI" fluide et performance technique.</p>
             <div style="margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2);">
-                <strong>📍 Statut actuel :</strong><br>
-                Recherche de stage / Alternance
+                <strong>📍 Statut actuel :</strong><br>Recherche de stage / Alternance
             </div>
         </div>
 
         <div id="work" class="section">
             <h2>Projets Récents</h2>
-
-            <div class="project-card" onclick="alert('Lien vers le site E-Commerce')">
+            <div class="project-card" onclick="alert('Lien Projet')">
                 <div class="tags"><span>FRONTEND</span> <span>DESIGN</span></div>
                 <h3>Site E-Commerce One UI</h3>
                 <p>Interface minimaliste avec panier dynamique.</p>
             </div>
-
-            <div class="project-card" onclick="alert('Lien vers le Dashboard')">
+            <div class="project-card" onclick="alert('Lien Projet')">
                 <div class="tags"><span>VUE.JS</span> <span>FIREBASE</span></div>
                 <h3>Dashboard Crypto</h3>
                 <p>Visualisation de données financières en temps réel.</p>
             </div>
-
-            <div class="project-card" onclick="alert('Lien vers le Portfolio 3D')">
+            <div class="project-card" onclick="alert('Lien Projet')">
                 <div class="tags"><span>THREE.JS</span> <span>WEBGL</span></div>
                 <h3>Portfolio 3D</h3>
                 <p>Expérimentation sur la profondeur et la lumière.</p>
             </div>
         </div>
-
     </div>
 
     <script>
-        // SCRIPT D'INITIALISATION
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
-            setTimeout(() => {
-                loader.style.transform = 'translateY(-100%)';
-                setTimeout(() => {
-                    document.body.classList.add('loaded');
-                }, 300);
-            }, 1000);
+            const introFill = document.getElementById('intro-fill');
+            setTimeout(() => { introFill.style.width = '100%'; }, 100);
+            setTimeout(() => { loader.classList.add('hidden'); }, 2300);
         });
 
-        // NAVIGATION CLASSIQUE
         function show(id, btn) {
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            const target = document.getElementById(id);
-            if(target) target.classList.add('active'); // Vérif si existe (car CV n'est plus une section)
-
+            const t = document.getElementById(id); if(t) t.classList.add('active');
             document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
             if(btn) btn.classList.add('active');
         }
 
-        // --- FONCTIONNALITÉ CV PLEIN ÉCRAN ---
-        function launchCV() {
-            // 1. Afficher écran chargement noir
-            const loadScreen = document.getElementById('cv-loading-screen');
-            const bar = document.getElementById('cv-bar');
-            loadScreen.style.display = 'flex';
-            
-            // Anim barre
-            setTimeout(() => { bar.style.width = '100%'; }, 100);
-
-            // 2. Attendre 3 secondes
+        function openCV() {
+            const modal = document.getElementById('cv-modal-bg');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('open'); }, 10);
+            const internalLoader = document.getElementById('internal-cv-loader');
+            const content = document.getElementById('cv-content');
+            internalLoader.style.opacity = '1'; internalLoader.style.display = 'flex'; content.style.opacity = '0';
             setTimeout(() => {
-                loadScreen.style.display = 'none'; // Cacher chargement
-                bar.style.width = '0%'; // Reset barre
-
-                // 3. Afficher la page CV
-                const page = document.getElementById('cv-full-page');
-                page.style.display = 'flex';
-                setTimeout(() => { page.classList.add('active'); }, 50);
-
+                internalLoader.style.opacity = '0';
+                setTimeout(() => { internalLoader.style.display = 'none'; content.style.opacity = '1'; }, 500);
             }, 3000);
         }
 
         function closeCV() {
-            const page = document.getElementById('cv-full-page');
-            page.classList.remove('active');
-            setTimeout(() => { page.style.display = 'none'; }, 500);
+            const modal = document.getElementById('cv-modal-bg');
+            modal.classList.remove('open');
+            setTimeout(() => { modal.style.display = 'none'; }, 400);
         }
     </script>
 </body>
