@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HUGO BRIQUET // ÉTUDIANT</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+        /* RESET INDISPENSABLE */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
             --bg-color: #05000a;
@@ -15,41 +19,32 @@
             --accent-4: #185a9d; /* Bleu */
             --accent-5: #9d50bb; /* Violet */
             --border: rgba(255, 255, 255, 0.1);
+            --ease-fluid: cubic-bezier(0.76, 0, 0.24, 1);
         }
 
         body {
-            margin: 0; padding: 0;
             background-color: var(--bg-color);
             font-family: 'Inter', sans-serif;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
             color: white;
             display: flex;
         }
 
         /* --- FOND --- */
-        .background-fx { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #05000a; overflow: hidden; }
-        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; mix-blend-mode: screen; animation: liquidMotion 20s infinite alternate ease-in-out; }
+        .background-fx { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: #05000a; overflow: hidden; pointer-events: none; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; mix-blend-mode: screen; will-change: transform; animation: floatBlobs 20s infinite alternate ease-in-out; }
         .b1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-1); animation-duration: 25s; }
-        .b2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; background: var(--accent-2); animation-duration: 30s; animation-delay: -5s; }
-        .b3 { top: 30%; right: 10%; width: 35vw; height: 35vw; background: var(--accent-4); animation-duration: 28s; animation-delay: -10s; opacity: 0.4; }
+        .b2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; background: var(--accent-2); animation-duration: 28s; animation-delay: -5s; }
+        .b3 { top: 30%; right: 10%; width: 35vw; height: 35vw; background: var(--accent-4); animation-duration: 32s; animation-delay: -10s; opacity: 0.4; }
         .b4 { bottom: 10%; left: 10%; width: 40vw; height: 40vw; background: var(--accent-5); animation-duration: 22s; animation-delay: -15s; }
         .b5 { top: 10%; left: 40%; width: 30vw; height: 30vw; background: var(--accent-3); animation-duration: 35s; animation-delay: -2s; }
-        @keyframes liquidMotion {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); filter: blur(80px) hue-rotate(0deg); }
-            33% { transform: translate(100px, -50px) scale(1.2) rotate(45deg); filter: blur(90px) hue-rotate(45deg); }
-            66% { transform: translate(-50px, 80px) scale(0.8) rotate(90deg); filter: blur(70px) hue-rotate(90deg); }
-            100% { transform: translate(30px, -30px) scale(1.1) rotate(135deg); filter: blur(100px) hue-rotate(135deg); }
-        }
+        @keyframes floatBlobs { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(20px, -30px) scale(1.05); } }
 
         /* --- LOADER --- */
-        #loader {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem;
-            transition: opacity 0.8s ease, visibility 0.8s ease, transform 0.8s ease;
-        }
-        #loader.hidden { opacity: 0; visibility: hidden; transform: scale(1.1); pointer-events: none; }
+        #loader { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .loader-text span { display: inline-block; color: white; margin: 0 5px; animation: wave 1.5s infinite ease-in-out; }
         .loader-text span:nth-child(1) { animation-delay: 0.0s; }
         .loader-text span:nth-child(2) { animation-delay: 0.1s; }
@@ -59,79 +54,196 @@
         .intro-progress-container { width: 200px; height: 3px; background: rgba(255,255,255,0.1); margin-top: 30px; border-radius: 10px; overflow: hidden; }
         .intro-progress-fill { width: 0%; height: 100%; background: white; transition: width 2.2s cubic-bezier(0.22, 1, 0.36, 1); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-        /* --- LEFT PANEL --- */
-        .left-panel { flex: 1; padding: 80px; display: flex; flex-direction: column; justify-content: center; position: relative; }
-        
-        h1 { font-family: 'Syne', sans-serif; font-size: 6vw; line-height: 0.9; margin: 0; text-transform: uppercase; font-weight: 800; }
-        .hero-line { display: block; overflow: hidden; }
-        
-        /* 1. APPARITION DU NOM (2.4s et 2.6s) */
-        .hero-line span {
-            display: block; opacity: 0; transform: translateY(100px) skewY(10deg); filter: blur(20px);
-            animation: premiumReveal 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        /* --- HORLOGE LIQUID GLASS --- */
+        #glass-clock-widget { 
+            position: fixed; top: 40px; left: 40px; z-index: 1000; 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 12px 25px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
+            display: flex; flex-direction: column; align-items: flex-start; 
+            opacity: 0; transform: translateY(-15px); 
+            animation: fadeInDrop 1s 4.2s forwards var(--ease-fluid); 
+            transition: all 0.8s var(--ease-fluid); 
         }
-        .hero-line:nth-child(1) span { animation-delay: 2.4s; }
-        .hero-line:nth-child(2) span { animation-delay: 2.6s; }
+        #glass-clock-widget:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 0 25px rgba(255, 0, 92, 0.15); transform: translateY(0) scale(1.02); }
+        #clock-date { font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+        #clock-time { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 700; color: white; text-shadow: 0 0 20px rgba(255, 255, 255, 0.2); font-variant-numeric: tabular-nums; }
+        @keyframes fadeInDrop { to { opacity: 1; transform: translateY(0); } }
+
+        /* HORLOGE EN MODE PROJET */
+        body.project-mode #glass-clock-widget {
+            top: 20px; left: 20px;
+            transform: scale(0.85);
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* --- LEFT PANEL --- */
+        .left-panel { 
+            flex-shrink: 0;
+            width: 50vw; 
+            height: 100vh;
+            padding: 80px; 
+            display: flex; flex-direction: column; justify-content: center; position: relative; 
+            transition: all 0.8s var(--ease-fluid);
+            z-index: 100;
+        }
+
+        /* MODE PROJET : HEADER */
+        body.project-mode .left-panel {
+            width: 100vw; 
+            height: 180px; /* Hauteur fixe plus petite */
+            padding: 0; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.2); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        h1 { font-family: 'Syne', sans-serif; font-size: 5.2vw; line-height: 0.9; margin: 0; text-transform: uppercase; font-weight: 800; white-space: nowrap; transition: all 0.8s var(--ease-fluid); }
+
+        /* TITRE EN MODE PROJET */
+        body.project-mode h1 { font-size: 3.5rem; margin-top: 0; width: 100%; text-align: center; } 
+
+        /* --- CORRECTION BUG "ETUDIANT" QUI RESTE --- */
+        .badge, .sub-text-anim {
+            transition: all 0.5s ease;
+            opacity: 1; transform: translateY(0);
+            max-height: 100px; /* Hauteur max pour l'anim */
+            margin-bottom: 20px;
+        }
+        
+        body.project-mode .badge,
+        body.project-mode .sub-text-anim {
+            opacity: 0; 
+            transform: translateY(-20px); 
+            max-height: 0; /* On écrase la hauteur */
+            margin: 0; padding: 0; /* On vire les marges */
+            overflow: hidden; /* On cache ce qui dépasse */
+            pointer-events: none;
+        }
+
+        /* PADDING "T" BRIQUET */
+        .hero-line { display: block; overflow: hidden; padding-right: 20px; }
+        .hero-line:nth-child(2) { font-size: 0.88em; }
+        
+        .hero-line > span.initial-anim { display: block; opacity: 0; transform: translateY(100px) skewY(10deg); filter: blur(20px); animation: premiumReveal 1.2s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
+        .hero-line:nth-child(1) > span { animation-delay: 2.7s; }
+        .hero-line:nth-child(2) > span { animation-delay: 2.9s; }
         @keyframes premiumReveal { to { opacity: 1; transform: translateY(0) skewY(0deg); filter: blur(0); } }
+
+        /* VAGUE ROSE */
+        .pink-char { display: inline-block !important; animation: pinkWave 3s infinite ease-in-out; will-change: color, text-shadow; }
+        @keyframes pinkWave { 0%, 100% { color: white; text-shadow: 0 0 15px rgba(255,255,255,0.1); } 50% { color: #ff005c; text-shadow: 0 0 30px #ff005c, 0 0 50px #ff005c; } }
 
         .outline { -webkit-text-stroke: 2px rgba(255,255,255,0.5); color: transparent; }
         .fill { color: white; text-shadow: 0 0 30px rgba(255, 0, 92, 0.5); }
-        
-        /* 2. APPARITION BADGE & SOUS-TITRE (2.7s - Soit 0.1s après le nom) */
-        .badge {
-            display: inline-block; margin-bottom: 20px;
-            background: white; color: black; padding: 5px 15px; border-radius: 50px;
-            font-weight: 700; font-size: 0.9rem; letter-spacing: 1px; width: fit-content;
-            opacity: 0; 
-            /* Apparition retardée ici */
-            animation: fadeInSimple 1s 2.7s forwards, floatBadge 3s infinite ease-in-out; 
-            box-shadow: 0 0 15px rgba(255,255,255,0.3);
-        }
-        
-        .sub-text-anim {
-            opacity: 0;
-            transform: translateY(20px);
-            /* Même délai que le badge */
-            animation: fadeInUpSimple 1s 2.7s forwards; 
-        }
-
+        .badge { display: inline-block; background: white; color: black; padding: 5px 15px; border-radius: 50px; font-weight: 700; font-size: 0.9rem; letter-spacing: 1px; width: fit-content; opacity: 0; animation: fadeInSimple 1s 3.0s forwards, floatBadge 3s infinite ease-in-out; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .sub-text-anim { opacity: 0; transform: translateY(20px); animation: fadeInUpSimple 1s 3.0s forwards; }
         @keyframes fadeInSimple { to { opacity: 1; } }
         @keyframes fadeInUpSimple { to { opacity: 0.8; transform: translateY(0); } }
         @keyframes floatBadge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        /* --- RIGHT PANEL (MENU) --- */
+        /* --- RIGHT PANEL --- */
         .right-panel {
-            flex: 1; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(40px);
+            flex-shrink: 0;
+            width: 50vw; height: 100%;
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(40px);
             border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 60px; overflow-y: auto;
-            /* 3. APPARITION MENU (3.3s - Plus tard pour l'effet) */
             transform: translateX(100%); opacity: 0;
-            animation: slideInRight 1.5s cubic-bezier(0.2, 1, 0.2, 1) 3.3s forwards;
+            animation: slideInRight 1.5s cubic-bezier(0.2, 1, 0.2, 1) 3.6s forwards;
+            transition: transform 0.8s var(--ease-fluid), opacity 0.5s ease;
         }
         @keyframes slideInRight { to { transform: translateX(0); opacity: 1; } }
         .right-panel::-webkit-scrollbar { width: 0; }
+
+        /* MODE PROJET : RIGHT PANEL SORT VERS LA DROITE */
+        body.project-mode .right-panel {
+            animation: none;
+            transform: translateX(100%); opacity: 0; pointer-events: none;
+        }
 
         nav { background: rgba(0,0,0,0.4); padding: 5px; border-radius: 100px; display: inline-flex; margin-bottom: 50px; border: 1px solid var(--border); }
         nav button { background: transparent; border: none; color: #aaa; padding: 10px 25px; border-radius: 50px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; transition: 0.3s; }
         nav button.active { background: white; color: black; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         nav button:hover:not(.active) { color: white; background: rgba(255,255,255,0.1); }
 
-        .section { display: none; animation: fadeIn 0.5s ease; }
+        .section { display: none; animation: fadeIn 0.5s ease; overflow: visible; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { font-family: 'Syne', sans-serif; font-size: 2.5rem; margin-bottom: 30px; }
-        p { color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 20px; }
+        /* --- TYPEWRITER --- */
+        #typewriter-container { font-family: 'Fira Code', 'Inter', monospace; font-size: 1.05rem; line-height: 1.7; color: rgba(255,255,255,0.9); min-height: 120px; margin-bottom: 10px; transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1); transform-origin: top left; }
+        #typewriter-container.shrunk { transform: scale(0.95) translateY(-5px); opacity: 0.7; }
+        .tw-white { color: #e0e0e0; } .tw-accent-1 { color: var(--accent-1); font-weight: 500; text-shadow: 0 0 10px rgba(255, 0, 92, 0.4); } .tw-accent-2 { color: var(--accent-2); font-weight: 500; text-shadow: 0 0 10px rgba(255, 190, 11, 0.4); } .tw-accent-3 { color: var(--accent-3); font-weight: 500; } .tw-accent-4 { color: var(--accent-4); font-weight: 500; }
+        .prompt { display: inline-block; color: var(--accent-3); margin-right: 10px; font-weight: bold; opacity: 0; animation: tourniquet 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 4.0s forwards; }
+        @keyframes tourniquet { 0% { transform: rotate(-540deg) scale(0); opacity: 0; } 80% { transform: rotate(20deg) scale(1.2); opacity: 1; } 100% { transform: rotate(0deg) scale(1); opacity: 1; } }
+        .cursor { display: inline-block; width: 8px; height: 1.1em; background: var(--accent-1); vertical-align: text-bottom; margin-left: 3px; opacity: 0; animation: popIn 0.3s ease 4.6s forwards, blink 0.8s infinite 4.9s; }
+        @keyframes popIn { 0% { transform: scaleY(0); opacity: 0; } 100% { transform: scaleY(1); opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .project-card {
-            background: rgba(0,0,0,0.2); border: 1px solid var(--border);
-            padding: 25px; margin-bottom: 20px; border-radius: 16px;
-            transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
+        #quick-access-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; letter-spacing: 3px; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; margin-bottom: 15px; margin-top: 30px; opacity: 0; transform: translateY(15px) scale(0.9); transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #quick-access-title.visible { opacity: 1; transform: translateY(0); }
+
+        .shortcuts-container { display: flex; gap: 15px; margin-bottom: 35px; flex-wrap: wrap; transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); transform: scale(0.95); }
+        .shortcuts-container.expanded { transform: scale(1); }
+        .liquid-btn { flex: 1; min-width: 140px; padding: 15px; text-align: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; position: relative; overflow: hidden; backdrop-filter: blur(5px); }
+        .liquid-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-1); box-shadow: 0 0 25px rgba(255, 0, 92, 0.2); transform: translateY(-3px); }
+        .liquid-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
+        .liquid-btn:hover::after { left: 100%; }
+
+        .status-wrapper { margin-top: 20px; position: relative; z-index: 0; border-radius: 12px; }
+        .status-wrapper::before, .status-wrapper::after { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: linear-gradient(45deg, #ff005c, #ffbe0b, #43cea2, #185a9d, #9d50bb, #ff005c); background-size: 400%; z-index: -1; border-radius: 14px; animation: steam 20s linear infinite; }
+        .status-wrapper::after { filter: blur(25px); opacity: 0.7; }
+        @keyframes steam { 0% { background-position: 0 0; } 50% { background-position: 400% 0; } 100% { background-position: 0 0; } }
+        .status-content { background: rgba(10, 10, 15, 0.95); padding: 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+
+        /* --- GRILLE PROJETS (FULL SCREEN & CENTRÉE) --- */
+        #projects-fullscreen {
+            position: fixed; top: 180px; left: 0; width: 100%; height: calc(100vh - 180px);
+            padding: 40px; 
+            overflow-y: auto;
+            opacity: 0; pointer-events: none;
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px;
+            /* CENTRAGE */
+            max-width: 1400px; margin: 0 auto; 
+            left: 50%; transform: translateX(-50%) translateY(50px);
+            transition: opacity 0.5s ease, transform 0.8s var(--ease-fluid);
+            z-index: 50;
         }
-        .project-card:hover { border-color: var(--accent-1); background: rgba(255, 0, 92, 0.1); transform: scale(1.02) translateX(10px); }
+        
+        #projects-fullscreen.visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+
+        .project-card { 
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border); 
+            padding: 25px; border-radius: 16px; position: relative; overflow: hidden; backdrop-filter: blur(5px);
+            opacity: 0; transform: translateY(30px); cursor: pointer;
+            transition: 0.3s ease, opacity 0.6s ease, transform 0.6s var(--ease-fluid);
+        }
+        
+        /* Animation d'apparition des cartes */
+        body.project-mode .project-card { opacity: 1; transform: translateY(0); }
+        body.project-mode .project-card:nth-child(1) { transition-delay: 0.6s; }
+        body.project-mode .project-card:nth-child(2) { transition-delay: 0.7s; }
+        body.project-mode .project-card:nth-child(3) { transition-delay: 0.8s; }
+        body.project-mode .project-card:nth-child(4) { transition-delay: 0.9s; }
+        body.project-mode .project-card:nth-child(5) { transition-delay: 1.0s; }
+
+        .project-card:hover { border-color: var(--accent-1); background: rgba(255, 0, 92, 0.1); transform: scale(1.02) translateY(0) !important; }
         .project-card::after { content: '➔'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); opacity: 0; transition: 0.3s; font-size: 1.5rem; color: white; }
         .project-card:hover::after { opacity: 1; right: 25px; }
         .project-card h3 { margin: 0 0 5px 0; font-size: 1.2rem; }
         .tags span { font-size: 0.7rem; color: var(--accent-2); margin-right: 10px; text-transform: uppercase; }
+
+        /* BOUTON RETOUR */
+        #back-btn {
+            position: fixed; top: 30px; right: 30px;
+            padding: 10px 25px; border-radius: 50px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            color: white; cursor: pointer; font-weight: 600; font-family: 'Inter'; text-transform: uppercase; letter-spacing: 1px;
+            opacity: 0; transform: translateX(20px); pointer-events: none; transition: all 0.5s ease; z-index: 1000; backdrop-filter: blur(10px);
+        }
+        body.project-mode #back-btn { opacity: 1; transform: translateX(0); pointer-events: auto; transition-delay: 0.8s; }
+        #back-btn:hover { background: white; color: black; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
         /* --- CV MODAL --- */
         #cv-modal-bg { position: fixed; inset: 0; z-index: 2000; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); display: none; opacity: 0; transition: opacity 0.4s; justify-content: center; align-items: center; padding: 40px; }
@@ -150,7 +262,7 @@
         #cv-content { width: 100%; height: 100%; display: grid; grid-template-columns: 1fr 2fr; opacity: 0; transition: opacity 0.8s; overflow-y: auto; }
         .cv-sidebar { padding: 40px; background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.1); }
         .cv-main { padding: 40px; }
-        .cv-photo { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--accent-1); margin-bottom: 30px; background: #222 url('https://via.placeholder.com/140') center/cover; }
+        .cv-photo { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--accent-1); margin-bottom: 30px; background: linear-gradient(135deg, #1a0a2e 0%, #3a1a5e 50%, #1a1a3e 100%); }
         .cv-close-btn { position: absolute; top: 20px; right: 20px; z-index: 20; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); color: white; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
         .cv-close-btn:hover { background: var(--accent-1); transform: rotate(90deg); }
 
@@ -159,10 +271,21 @@
             .left-panel { height: auto; padding: 60px 20px; width: 100%; }
             .right-panel { height: auto; padding: 40px 20px; width: 100%; }
             #cv-content { grid-template-columns: 1fr; }
+            #glass-clock-widget { top: 20px; left: 20px; padding: 10px 15px; }
+            #clock-time { font-size: 1.4rem; }
+            body.project-mode .left-panel { height: 180px; }
+            #projects-fullscreen { top: 180px; height: calc(100vh - 180px); padding: 20px; }
         }
     </style>
 </head>
 <body>
+
+    <button id="back-btn" onclick="exitProjectMode()">← Retour</button>
+
+    <div id="glass-clock-widget">
+        <div id="clock-date"></div>
+        <div id="clock-time"></div>
+    </div>
 
     <div class="background-fx">
         <div class="blob b1"></div>
@@ -188,22 +311,17 @@
                 <div class="cv-sidebar">
                     <div class="cv-photo"></div>
                     <h3 style="color:var(--accent-2);">CONTACT</h3>
-                    <p style="font-size:0.9rem;">📍 Paris, France<br>✉️ hugo@dev.com<br>📞 06.00.00.00.00</p>
+                    <p style="font-size:0.9rem;">📍 ARRAS, France<br>✉️ hugo@dev.com<br>📞 06.00.00.00.00</p>
                     <h3 style="color:var(--accent-2); margin-top:30px;">SKILLS</h3>
-                    <p style="font-size:0.9rem;">React • Node.js • Design</p>
+                    <p style="font-size:0.9rem;">HTML/CSS • JS • Design</p>
                 </div>
                 <div class="cv-main">
                     <h2 style="font-family:'Syne'; margin:0; font-size:2.5rem;">HUGO BRIQUET</h2>
-                    <p style="color:var(--accent-1); font-weight:700;">DÉVELOPPEUR FULLSTACK</p>
+                    <p style="color:var(--accent-1); font-weight:700;">ÉTUDIANT & DÉVELOPPEUR</p>
                     <hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">
-                    <h3 style="color:var(--accent-2);">EXPÉRIENCES</h3>
+                    <h3 style="color:var(--accent-2);">PARCOURS</h3>
                     <div style="margin-bottom:20px;">
-                        <strong>Alternance Web</strong><div style="color:#888; font-size:0.9rem;">2023 - Présent</div>
-                        <p style="margin-top:5px; font-size:0.95rem;">Développement d'apps React.</p>
-                    </div>
-                    <h3 style="color:var(--accent-2);">FORMATION</h3>
-                    <div style="margin-bottom:20px;">
-                        <strong>Master Informatique</strong><div style="color:#888; font-size:0.9rem;">2024</div>
+                        <strong>Lycée Gambetta Carnot</strong><div style="color:#888; font-size:0.9rem;">2024 - Présent | STI2D</div>
                     </div>
                 </div>
             </div>
@@ -213,8 +331,8 @@
     <div class="left-panel">
         <div class="badge">ÉTUDIANT</div>
         <h1>
-            <span class="hero-line"><span class="outline">HUGO</span></span>
-            <span class="hero-line"><span class="fill">BRIQUET</span></span>
+            <span class="hero-line"><span class="outline initial-anim">HUGO</span></span>
+            <span class="hero-line"><span class="fill initial-anim" id="lastname">BRIQUET</span></span>
         </h1>
         <p class="sub-text-anim" style="margin-top: 30px; max-width: 400px; color: rgba(255,255,255,0.8);">
             Création d'interfaces numériques & Développement Web.
@@ -225,51 +343,185 @@
         <nav>
             <button class="active" onclick="show('home', this)">Intro</button>
             <button onclick="openCV()">CV</button>
-            <button onclick="show('work', this)">Projets</button>
+            <button onclick="enterProjectMode()">Projets</button>
         </nav>
 
         <div id="home" class="section active">
             <h2>Bienvenue.</h2>
-            <p>Je suis Hugo Briquet, un étudiant passionné par le code créatif.</p>
-            <p>Mon objectif est de fusionner design "One UI" fluide et performance technique.</p>
-            <div style="margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2);">
-                <strong>📍 Statut actuel :</strong><br>Recherche de stage / Alternance
+            
+            <div id="typewriter-container">
+                <span class="prompt">></span><span id="typewriter-content"></span><span class="cursor"></span>
             </div>
-        </div>
+            
+            <div id="quick-access-title">ACCÈS RAPIDE</div>
 
-        <div id="work" class="section">
-            <h2>Projets Récents</h2>
-            <div class="project-card" onclick="alert('Lien Projet')">
-                <div class="tags"><span>FRONTEND</span> <span>DESIGN</span></div>
-                <h3>Site E-Commerce One UI</h3>
-                <p>Interface minimaliste avec panier dynamique.</p>
+            <div class="shortcuts-container">
+                <button class="liquid-btn" onclick="openCV()">Voir mon CV</button>
+                <button class="liquid-btn" onclick="enterProjectMode()">Mes Projets</button>
             </div>
-            <div class="project-card" onclick="alert('Lien Projet')">
-                <div class="tags"><span>VUE.JS</span> <span>FIREBASE</span></div>
-                <h3>Dashboard Crypto</h3>
-                <p>Visualisation de données financières en temps réel.</p>
-            </div>
-            <div class="project-card" onclick="alert('Lien Projet')">
-                <div class="tags"><span>THREE.JS</span> <span>WEBGL</span></div>
-                <h3>Portfolio 3D</h3>
-                <p>Expérimentation sur la profondeur et la lumière.</p>
+
+            <div class="status-wrapper">
+                <div class="status-content">
+                    <strong>📍 Statut actuel :</strong><br>
+                    Lycéen en STI2D
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="projects-fullscreen">
+        <div class="project-card">
+            <div class="tags"><span>FRONTEND</span> <span>DESIGN</span></div>
+            <h3>Site E-Commerce One UI</h3>
+            <p>Interface minimaliste avec panier dynamique.</p>
+        </div>
+        <div class="project-card">
+            <div class="tags"><span>VUE.JS</span> <span>FIREBASE</span></div>
+            <h3>Dashboard Crypto</h3>
+            <p>Visualisation de données financières en temps réel.</p>
+        </div>
+        <div class="project-card">
+            <div class="tags"><span>THREE.JS</span> <span>WEBGL</span></div>
+            <h3>Portfolio 3D</h3>
+            <p>Expérimentation sur la profondeur et la lumière.</p>
+        </div>
+        <div class="project-card">
+            <div class="tags"><span>PYTHON</span> <span>SCRIPT</span></div>
+            <h3>Automatisation Élec</h3>
+            <p>Script de calcul de charge électrique.</p>
+        </div>
+        <div class="project-card">
+            <div class="tags"><span>ARDUINO</span> <span>C++</span></div>
+            <h3>Capteur IOT</h3>
+            <p>Relevé de température connecté.</p>
+        </div>
+    </div>
+
     <script>
+        // INIT
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
             const introFill = document.getElementById('intro-fill');
             setTimeout(() => { introFill.style.width = '100%'; }, 100);
-            setTimeout(() => { loader.classList.add('hidden'); }, 2300);
+            
+            setTimeout(() => { 
+                loader.classList.add('hidden'); 
+                setTimeout(startFancyTypewriter, 4800); 
+                setTimeout(startNamePinkWave, 3800);
+                setTimeout(() => {
+                    document.querySelectorAll('.hero-line').forEach(el => el.style.overflow = 'visible');
+                }, 2000);
+            }, 2300);
         });
 
+        // CLOCK SCRIPT
+        function updateClock() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
+            const dateString = now.toLocaleDateString('fr-FR', dateOptions);
+            const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            document.getElementById('clock-date').innerText = dateString;
+            document.getElementById('clock-time').innerText = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- PINK WAVE ---
+        function startNamePinkWave() {
+            const nameContainer = document.getElementById('lastname');
+            const text = nameContainer.innerText;
+            nameContainer.classList.remove('initial-anim');
+            nameContainer.innerHTML = ''; 
+            
+            text.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.className = 'pink-char';
+                span.style.animationDelay = `${index * 0.2}s`;
+                nameContainer.appendChild(span);
+            });
+        }
+
+        // --- LOGIQUE PROJECT MODE ---
+        function enterProjectMode() {
+            const rp = document.querySelector('.right-panel');
+            rp.style.removeProperty('transform');
+            rp.style.removeProperty('opacity');
+            document.body.classList.add('project-mode');
+            document.getElementById('projects-fullscreen').classList.add('visible');
+        }
+
+        function exitProjectMode() {
+            const rp = document.querySelector('.right-panel');
+            document.body.classList.remove('project-mode');
+            document.getElementById('projects-fullscreen').classList.remove('visible');
+            rp.style.animation = 'none';
+            setTimeout(() => {
+                rp.style.transform = 'translateX(0)';
+                rp.style.opacity = '1';
+                rp.style.pointerEvents = 'auto';
+            }, 0);
+        }
+
         function show(id, btn) {
+            if(id === 'work') { enterProjectMode(); return; }
             document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
             const t = document.getElementById(id); if(t) t.classList.add('active');
             document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
             if(btn) btn.classList.add('active');
+        }
+
+        // --- TYPEWRITER ---
+        const textSegments = [
+            { text: "Je suis ", class: "tw-white" },
+            { text: "Hugo Briquet", class: "tw-accent-1" },
+            { text: ", étudiant en ", class: "tw-white" },
+            { text: "STI2D", class: "tw-accent-2" },
+            { text: " à Gambetta Carnot à ", class: "tw-white" },
+            { text: "ARRAS", class: "tw-accent-3" },
+            { text: ". J'aime l'", class: "tw-white" },
+            { text: "électricité", class: "tw-accent-4" },
+            { text: ", et je code des ", class: "tw-white" },
+            { text: "scripts", class: "tw-accent-1" },
+            { text: " pendant mon temps libre.", class: "tw-white" }
+        ];
+
+        const twElement = document.getElementById('typewriter-content');
+        let segmentIndex = 0;
+        let charIndex = 0;
+
+        function startFancyTypewriter() {
+            if (segmentIndex < textSegments.length) {
+                const currentSegment = textSegments[segmentIndex];
+                let currentSpan = twElement.lastElementChild;
+                if (charIndex === 0) {
+                    currentSpan = document.createElement('span');
+                    currentSpan.className = currentSegment.class;
+                    twElement.appendChild(currentSpan);
+                }
+                currentSpan.textContent += currentSegment.text.charAt(charIndex);
+                charIndex++;
+                let speed = Math.floor(Math.random() * 20) + 30; 
+                const char = currentSegment.text.charAt(charIndex - 1);
+                if (char === ',' || char === '.') speed += 300;
+
+                if (charIndex < currentSegment.text.length) {
+                    setTimeout(startFancyTypewriter, speed);
+                } else {
+                    segmentIndex++;
+                    charIndex = 0;
+                    setTimeout(startFancyTypewriter, speed);
+                }
+            } else {
+                setTimeout(() => {
+                    const cursor = document.querySelector('.cursor');
+                    if(cursor) cursor.style.display = 'none';
+                    document.getElementById('typewriter-container').classList.add('shrunk');
+                    document.getElementById('quick-access-title').classList.add('visible');
+                    document.querySelector('.shortcuts-container').classList.add('expanded');
+                }, 2000);
+            }
         }
 
         function openCV() {
